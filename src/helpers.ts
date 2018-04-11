@@ -1,19 +1,20 @@
-export function createArrayN(obj: any, amount: number) {
-  return Array(amount).fill(obj);
+export function dec2hex(num: string | number): string {
+  let str = num.toString();
+  let hex = parseInt(str, 10).toString(16);
+
+  return hex;
 }
 
-export function dec2hex(num: any) {
-  return parseInt(num, 10).toString(16);
-}
+export function hex2dec(num: string | number): number {
+  let str = num.toString().replace(' ', '');
+  let dec = parseInt(str, 16).toString(10);
 
-export function hex2dec(num: any): number {
-  return parseInt(parseInt(num.replace(' ', ''), 16).toString(10));
+  return parseInt(dec);
 }
 
 export function bufferToArray(buffer: Buffer) {
   // Returns array<string> of hex values from buffer object
-  // TO-DO: Better way to convert Buffer to Array<string>
-  let byteArray = JSON.parse(JSON.stringify(buffer)).data;
+  let byteArray = Array.from(buffer);
 
   return byteArray.map((byte: number) => {
     return dec2hex(byte);

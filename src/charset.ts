@@ -46,14 +46,14 @@ function createCharset() {
     null,
 
     // 0x01 - 0x47   71 bytes of junk
-    ...createArrayN(undefined, 71),
+    ...Array(71).fill(undefined),
 
     // 0x48 - 0x5F   Control characters, doc at top
     // TO-DO: Add handlers for every control character
-    ...createArrayN('$CONTROL$', 24),
+    ...Array(24).fill('$CONTROL$'),
 
     // 0x60 - 0x7F   Character leftovers from JAP game version, do not use
-    ...createArrayN('$JAP$', 32),
+    ...Array(32).fill('$JAP$'),
 
     // 0x80 - 0xBA
     ... 'ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyzé'.split(''),
@@ -66,7 +66,7 @@ function createCharset() {
     `'v`,
 
     // 0xC0 - 0xDF   32 bytes of junk
-    ...createArrayN(undefined, 32),
+    ...Array(32).fill(undefined),
 
     // 0xE0 - 0xE5
     `'`,
