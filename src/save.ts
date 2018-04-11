@@ -18,6 +18,7 @@ export default class Save {
 
   getPlayerName() {
     const bytes = this.getBytes('2598', 11);
+    
     return bytesToString(bytes);
   }
 }

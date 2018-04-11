@@ -42,7 +42,7 @@ function createCharset() {
   */
 
   // 0x80 - 0xB9
-  let charset = [
+  const charset = [
     null,
 
     // 0x01 - 0x47   71 bytes of junk
@@ -96,6 +96,7 @@ export function bytesToString(bytes: Buffer): string {
     const hexByte = dec2hex(bytes[i]);
     const character = charset[hex2dec(hexByte)];
     
+    // 0x50 is string terminator
     if (hexByte === '50') break;
     str += character;
   }
