@@ -1,4 +1,4 @@
-import { dec2hex, hex2dec, createArrayN } from "./helpers";
+import { dec2hex, hex2dec } from "./helpers";
 
 /*
 0x49: Used in Pokédex entries to prompt the player to press a button, after which the screen is cleared to make way for the following text.
