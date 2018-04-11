@@ -14,6 +14,10 @@ export function hex2dec(num: string | number): number {
   return parseInt(dec);
 }
 
+export function dec2bin(num: number): string {
+  return String('00000000' + num.toString(2)).slice(-8);
+}
+
 export function bytesToString(bytes: Buffer): string {
   let str = '';
 
@@ -23,7 +27,7 @@ export function bytesToString(bytes: Buffer): string {
     
     str += character;
   }
-  
+
   return str;
 }
 

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { hex2dec, dec2hex, bytesToString, bcdToNumber,
-         reverseBuffer, bytesToNumber } from './helpers';
+         reverseBuffer, bytesToNumber, dec2bin } from './helpers';
 
 
 export default class Save {
@@ -11,6 +11,7 @@ export default class Save {
   money:       number;
   casinoCoins: number;
   options:     object;
+  badges:      object;
   pikachuFriendship: number;
   timePlayed:  object; // Keys: hour, minute, second
 
@@ -22,6 +23,7 @@ export default class Save {
     this.money       = this.getMoney();
     this.casinoCoins = this.getCasinoCoins();
     this.options     = this.getOptions();
+    this.badges      = this.getBadges();
     this.pikachuFriendship = this.getPikachuFriendship();
     this.timePlayed  = this.getTimePlayed();
   }
@@ -72,13 +74,10 @@ export default class Save {
   
   getOptions(): object {
     const bytes = this.getBytes('2601');
-
-    // TO-DO: Write helper to convert hex/dec to binary
-    const bin = String('00000000' + bytes[0].toString(2)).slice(-8);
+    const bin = dec2bin(bytes[0]);
 
     // TO-DO: sound bits is different for Pokémon Yellow
     // See: https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_in_Generation_I#Options
-
     const textSpeeds = {
       '001': 'fast',
       '011': 'normal',
@@ -91,6 +90,22 @@ export default class Save {
       sound:         (bin[3]) ? 'stereo' : 'mono', 
       textSpeed:     textSpeeds[bin.slice(5,8)]
     };
+  }
+
+  getBadges(): object {
+    const bytes = this.getBytes('2602');
+    const bin = dec2bin(bytes[0]);
+
+    return {
+      boulder: bin[0] === '1',
+      cascade: bin[1] === '1',
+      thunder: bin[2] === '1',
+      rainbow: bin[3] === '1',
+      soul:    bin[4] === '1',
+      marsh:   bin[5] === '1',
+      volcano: bin[6] === '1',
+      earth:   bin[7] === '1'
+    }
   }
 
   getPikachuFriendship(): number {

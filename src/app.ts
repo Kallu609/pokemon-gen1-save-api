@@ -7,5 +7,3 @@ console.log('Player: ' + save.playerName);
 console.log('Rival:  ' + save.rivalName);
 
 console.log('----------------');
-
-console.log(save.options);
