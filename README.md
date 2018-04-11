@@ -1,11 +1,11 @@
-## Pokemon Generation 1 Save API
+# Pokemon Generation 1 Save API
 
-# Requirements
+## Requirements
 * Node.js
 
-# Installation & usage
+## Installation & usage
 * `npm install`
 * `npm start`
 
-# Resources
+## Resources
 * [Save data structure in Generation I](https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_in_Generation_I)
