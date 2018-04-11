@@ -21,12 +21,20 @@ export function bytesToString(bytes: Buffer): string {
     const hexByte = dec2hex(bytes[i]);
     const character = charset[hex2dec(hexByte)];
     
-    // 0x50 is string terminator
-    if (hexByte === '50') break;
     str += character;
   }
   
   return str;
+}
+
+export function bytesToNumber(bytes: Buffer): number {
+  let byteStr = '';
+
+  for (let i = 0; i < bytes.length; i++) {
+    byteStr += dec2hex(bytes[i]);
+  }
+
+  return hex2dec(byteStr);
 }
 
 export function bcdToNumber(bcd: Buffer): number {
@@ -35,11 +43,22 @@ export function bcdToNumber(bcd: Buffer): number {
   let num = 0;
   let multiplier = 1;
 
-  for(let i = 0; i < bcd.length; i++) {
+  for (let i = 0; i < bcd.length; i++) {
       num += (bcd[bcd.length - 1 - i] & 0x0F) * multiplier;
       num += ((bcd[bcd.length - 1 - i] >> 4) & 0x0F) * multiplier * 10;
       multiplier *= 100;
   }
 
   return num;
+}
+
+export function reverseBuffer(src: Buffer): Buffer {
+  let buffer = new Buffer(src.length);
+
+  for (let i = 0, j = src.length - 1; i <= j; i++, j--) {
+    buffer[i] = src[j];
+    buffer[j] = src[i];
+  }
+  
+  return buffer;
 }

@@ -89,20 +89,5 @@ function createCharset() {
   return charset;
 }
 
-export function bytesToString(bytes: Buffer): string {
-  let str = '';
-
-  for (let i = 0; i < bytes.length; i++) {
-    const hexByte = dec2hex(bytes[i]);
-    const character = charset[hex2dec(hexByte)];
-    
-    // 0x50 is string terminator
-    if (hexByte === '50') break;
-    str += character;
-  }
-  
-  return str;
-}
-
 const charset: Array<string> = createCharset();
 export default charset;
