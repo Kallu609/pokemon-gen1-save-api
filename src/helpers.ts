@@ -32,14 +32,14 @@ export function bytesToString(bytes: Buffer): string {
 export function bcdToNumber(bcd: Buffer): number {
   // bcd = Binary-coded decimal 
   // https://en.wikipedia.org/wiki/Binary-coded_decimal
-  var n = 0;
-  var m = 1;
+  let num = 0;
+  let multiplier = 1;
 
-  for(let i = 0; i < bcd.length; i+=1) {
-      n += (bcd[bcd.length-1-i] & 0x0F) * m;
-      n += ((bcd[bcd.length-1-i]>>4) & 0x0F) * m * 10;
-      m *= 100;
+  for(let i = 0; i < bcd.length; i++) {
+      num += (bcd[bcd.length - 1 - i] & 0x0F) * multiplier;
+      num += ((bcd[bcd.length - 1 - i] >> 4) & 0x0F) * multiplier * 10;
+      multiplier *= 100;
   }
 
-  return n;
+  return num;
 }
