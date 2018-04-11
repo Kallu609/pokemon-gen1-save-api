@@ -1,6 +1,5 @@
 import * as fs from 'fs';
-import { hex2dec, dec2hex } from './helpers';
-import { bytesToString } from './charset';
+import { hex2dec, dec2hex, bytesToString, bcdToNumber } from './helpers';
 
 export default class Save {
   save: Buffer;
@@ -16,9 +15,14 @@ export default class Save {
     return buffer;
   }
 
-  getPlayerName() {
+  getPlayerName(): string {
     const bytes = this.getBytes('2598', 11);
-    
+
     return bytesToString(bytes);
+  }
+
+  getMoney(): number {
+    const bytes = this.getBytes('25f3', 3);
+    return bcdToNumber(bytes);
   }
 }

@@ -28,7 +28,7 @@ The default value is Enemy in English games and てきの　 in Japanese games.
 0x5F: Used in Pokédex entries to mark the end of the entry, without a visual prompt to the player.
 */
 
-function printCharset() {
+function logCharset(): void {
   // For debug purposes
   for (let index in charset) {
     console.log(`${dec2hex(index)}: ${charset[index]}`)
@@ -104,5 +104,5 @@ export function bytesToString(bytes: Buffer): string {
   return str;
 }
 
-const charset = createCharset();
+const charset: Array<string> = createCharset();
 export default charset;
