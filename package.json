@@ -1,0 +1,19 @@
+{
+  "name": "pokemon-gen1-save-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.ts",
+  "scripts": {
+    "start": "ts-node ./src/app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kallu609",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^9.6.4",
+    "ts-node": "^5.0.1"
+  },
+  "dependencies": {
+    "tslint-config-airbnb": "^5.8.0"
+  }
+}
