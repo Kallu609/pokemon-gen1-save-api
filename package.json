@@ -11,7 +11,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^9.6.4",
-    "ts-node": "^5.0.1"
+    "ts-node": "^5.0.1",
+    "typescript": "^2.8.1"
   },
   "dependencies": {
     "tslint-config-airbnb": "^5.8.0"

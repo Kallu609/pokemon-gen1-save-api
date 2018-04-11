@@ -79,7 +79,7 @@ function createCharset() {
     // 0xE6 - 0xEF
     ... '?!.ァゥェ▷▶▼♂'.split(''),
 
-    // Pokédollar symbol
+    // 0xF0   Pokédollar symbol
     `PK$`,
 
     // 0xF1 - 0xFF

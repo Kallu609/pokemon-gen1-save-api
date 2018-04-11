@@ -7,7 +7,7 @@ export function dec2hex(num: any) {
 }
 
 export function hex2dec(num: any): number {
-  return parseInt(parseInt(num, 16).toString(10));
+  return parseInt(parseInt(num.replace(' ', ''), 16).toString(10));
 }
 
 export function bufferToArray(buffer: Buffer) {
