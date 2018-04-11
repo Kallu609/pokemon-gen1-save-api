@@ -1,5 +1,6 @@
 import * as fs from 'fs';
-import { bufferToArray } from './helpers';
+import { hex2dec, dec2hex } from './helpers';
+import { bytesToString } from './charset';
 
 export default class Save {
   save: Buffer;
@@ -8,10 +9,15 @@ export default class Save {
     this.save = fs.readFileSync(filename);
   }
 
-  getBytes(startPos: number, size: number) {
-    let buffer = this.save.slice(startPos, startPos + size);
-    let array = bufferToArray(buffer);
+  getBytes(hexBytes: string, size: number): Buffer {
+    const startPos = hex2dec(hexBytes);
+    const buffer = this.save.slice(startPos, startPos + size);
 
-    return array;
+    return buffer;
+  }
+
+  getPlayerName() {
+    const bytes = this.getBytes('2598', 11);
+    return bytesToString(bytes);
   }
 }

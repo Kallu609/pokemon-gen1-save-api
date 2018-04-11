@@ -46,14 +46,14 @@ function createCharset() {
     null,
 
     // 0x01 - 0x47   71 bytes of junk
-    ...Array(71).fill(undefined),
+    ... Array(71).fill(undefined),
 
     // 0x48 - 0x5F   Control characters, doc at top
     // TO-DO: Add handlers for every control character
-    ...Array(24).fill('$CONTROL$'),
+    ... Array(24).fill('$CONTROL$'),
 
     // 0x60 - 0x7F   Character leftovers from JAP game version, do not use
-    ...Array(32).fill('$JAP$'),
+    ... Array(32).fill('$JAP$'),
 
     // 0x80 - 0xBA
     ... 'ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyzé'.split(''),
@@ -66,7 +66,7 @@ function createCharset() {
     `'v`,
 
     // 0xC0 - 0xDF   32 bytes of junk
-    ...Array(32).fill(undefined),
+    ... Array(32).fill(undefined),
 
     // 0xE0 - 0xE5
     `'`,
@@ -89,15 +89,18 @@ function createCharset() {
   return charset;
 }
 
-export function bytesToString(bytes: Array<string>) {
-  // bytes: array<string> of hex bytes
-  return bytes.map((byte: string) => {
-    if (byte == '50') { // String terminator
-      return;
-    } else {
-      return charset[hex2dec(byte)];
-    }
-  }).join('');
+export function bytesToString(bytes: Buffer): string {
+  let str = '';
+
+  for (let i = 0; i < bytes.length; i++) {
+    const hexByte = dec2hex(bytes[i]);
+    const character = charset[hex2dec(hexByte)];
+    
+    if (hexByte === '50') break;
+    str += character;
+  }
+  
+  return str;
 }
 
 const charset = createCharset();

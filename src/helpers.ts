@@ -11,12 +11,3 @@ export function hex2dec(num: string | number): number {
 
   return parseInt(dec);
 }
-
-export function bufferToArray(buffer: Buffer) {
-  // Returns array<string> of hex values from buffer object
-  let byteArray = Array.from(buffer);
-
-  return byteArray.map((byte: number) => {
-    return dec2hex(byte);
-  });
-}
