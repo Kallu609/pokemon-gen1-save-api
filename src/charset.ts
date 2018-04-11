@@ -35,7 +35,7 @@ function logCharset(): void {
   }
 }
 
-function createCharset() {
+function createCharset(): Array<string | null | undefined>  {
   /*
   null      = null char
   undefined = Junk
@@ -89,5 +89,5 @@ function createCharset() {
   return charset;
 }
 
-const charset: Array<string> = createCharset();
+const charset: Array<string | null | undefined> = createCharset();
 export default charset;

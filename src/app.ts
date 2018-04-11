@@ -8,6 +8,4 @@ console.log('Rival:  ' + save.rivalName);
 
 console.log('----------------');
 
-console.log('Casino coins: ' + save.casinoCoins);
-console.log('Time played: ');
-console.log(save.timePlayed);
+console.log(save.options);

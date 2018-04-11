@@ -6,11 +6,13 @@ import { hex2dec, dec2hex, bytesToString, bcdToNumber,
 export default class Save {
   save: Buffer;
 
-  playerName: string;
-  rivalName: string;
-  money: number;
+  playerName:  string;
+  rivalName:   string;
+  money:       number;
   casinoCoins: number;
-  timePlayed: {}; // Keys: hour, minute, second
+  options:     object;
+  pikachuFriendship: number;
+  timePlayed:  object; // Keys: hour, minute, second
 
   constructor(filename: string) {
     this.save = fs.readFileSync(filename);
@@ -19,31 +21,27 @@ export default class Save {
     this.rivalName   = this.getRivalName();
     this.money       = this.getMoney();
     this.casinoCoins = this.getCasinoCoins();
+    this.options     = this.getOptions();
+    this.pikachuFriendship = this.getPikachuFriendship();
     this.timePlayed  = this.getTimePlayed();
   }
 
-  getBytes(offset: string, size?: number): Buffer {
-    let buffer;
-
-    if (!size) {
-      size = 1;
-    }
-
-    // Big-endian
+  getBytes(offset: string, size: number = 1): Buffer {
     if (size > 0) {
+      // Big-endian   Direction: 0x00 --> 0xFF
       const startPos = hex2dec(offset);
       const endPos = startPos + size;
-      buffer = this.save.slice(startPos, endPos);
-    }
-    // Little-endian
-    else {
+      const buffer = this.save.slice(startPos, endPos);
+
+      return buffer;
+    } else {    
+      // Little-endian   Direction: 0xFF --> 0x00
       const startPos = hex2dec(offset) - Math.abs(size) + 1;
       const endPos = startPos + 2;
-      buffer = this.save.slice(startPos, endPos);
-      buffer = reverseBuffer(buffer);
-    }
+      const buffer = this.save.slice(startPos, endPos);
 
-    return buffer;
+      return reverseBuffer(buffer);
+    }
   }
 
   getPlayerName(): string {
@@ -72,7 +70,35 @@ export default class Save {
     return bcdToNumber(bytes);
   }
   
-  getTimePlayed(): {} {
+  getOptions(): object {
+    const bytes = this.getBytes('2601');
+
+    // TO-DO: Write helper to convert hex/dec to binary
+    const bin = String('00000000' + bytes[0].toString(2)).slice(-8);
+
+    // TO-DO: sound bits is different for Pokémon Yellow
+    // See: https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_in_Generation_I#Options
+
+    const textSpeeds = {
+      '001': 'fast',
+      '011': 'normal',
+      '101': 'slow',
+    }
+
+    return {
+      battleEffects: (bin[0]) ? true     : false,
+      battleStyle:   (bin[1]) ? 'set'    : 'switch',
+      sound:         (bin[3]) ? 'stereo' : 'mono', 
+      textSpeed:     textSpeeds[bin.slice(5,8)]
+    };
+  }
+
+  getPikachuFriendship(): number {
+    const bytes = this.getBytes('271C');
+    return bytes[0];
+  }
+
+  getTimePlayed(): object {
     // First two bytes are little-endian.
     // In this order: Hour (2 bytes), minute (1 byte), second (1 byte)
     const hourBytes = this.getBytes('2CEE', -2);
