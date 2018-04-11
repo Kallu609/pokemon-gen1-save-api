@@ -1,4 +1,5 @@
 # Pokemon Generation 1 Save API
+Provides Typescript API to read Pokémon™ generation 1 save files
 
 ## Requirements
 * Node.js
