@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { hex2dec, dec2hex, bytesToString, bcdToNumber,
          reverseBuffer, bytesToNumber, dec2bin } from './helpers';
+import { textSpeeds } from './lists';
 
 
 export default class Save {
@@ -78,14 +79,8 @@ export default class Save {
     const bytes = this.getBytes('2601');
     const bin = dec2bin(bytes[0]);
 
-    // TO-DO: sound bits is different for Pokémon Yellow
+    // TO-DO: sound bits are different for Pokémon Yellow
     // See: https://bulbapedia.bulbagarden.net/wiki/Save_data_structure_in_Generation_I#Options
-    const textSpeeds = {
-      '001': 'fast',
-      '011': 'normal',
-      '101': 'slow',
-    }
-
     return {
       battleEffects: (bin[0]) ? true     : false,
       battleStyle:   (bin[1]) ? 'set'    : 'switch',
