@@ -17,6 +17,7 @@ Provides Typescript API to read (and write in future) Pokémon™ generation 1 s
 
 ## To-do
 * PC Box Pokemon lists
+* Daycare Pokemon
 * Pocket item list
 * Checksum calculation
 * Editing and writing of the save files
