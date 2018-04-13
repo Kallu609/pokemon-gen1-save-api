@@ -14,3 +14,9 @@ Provides Typescript API to read (and write in future) Pokémon™ generation 1 s
 
 * Stack Overflow: [Binary, decimal and hexadecimal functions](https://stackoverflow.com/a/12987042)
 * Stack Overflow: [Working with hex strings and buffers](https://stackoverflow.com/a/22902785)
+
+## To-do
+* PC Box Pokemon lists
+* Pocket item list
+* Checksum calculation
+* Editing and writing of the save files
