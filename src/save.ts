@@ -137,34 +137,33 @@ export default class Save {
 
   getTeamPokemonList(): object {
     const startOffset = 0x2F2C;
-    let bytes = this.getBytes(startOffset, 7);
+    const speciesBytes = this.getBytes(startOffset, 7);
+
     const species = [];
-    let tempOffset: number;
     
     // Get species
-    for (let i = 1; i < bytes[0] + 1; i++) {
-      species.push(speciesList[bytes[i]]);
+    for (let i = 1; i < speciesBytes[0] + 1; i++) {
+      species.push(speciesList[speciesBytes[i]]);
 
-      if (bytes[i] == 0xff) {
+      if (speciesBytes[i] == 0xff) {
         break;
       }
     }
 
-    tempOffset = startOffset + 0x008;
-    bytes = this.getBytes(tempOffset, 264);
+    const pokemonStructOffset = startOffset + 0x008;
 
-    let team = [];
+    const team = [];
 
     for (let i = 0; i < species.length; i++) {
-      tempOffset = startOffset + 0x008 + 44 * i;
+      const iterationOffset = pokemonStructOffset + 0x008 + 44 * i;
 
       // .map() doesn't work with buffer so
       // we need to convert (for code readability)
       const getArray = (offset: number, size: number=1): Array<number> => {
-        return Array.from(this.getBytes(tempOffset + offset, size));
+        return Array.from(this.getBytes(iterationOffset + offset, size));
       }
       const getNumber = (offset: number, size: number=1): number => {
-        return bytesToNumber(this.getBytes(tempOffset + offset, size));
+        return bytesToNumber(this.getBytes(iterationOffset + offset, size));
       }
       
       team.push({
