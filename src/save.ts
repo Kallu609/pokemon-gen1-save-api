@@ -8,7 +8,7 @@ import { moves } from './lists/moves';
 
 
 export default class Save {
-  save: Buffer;
+  buffer: Buffer;
 
   playerName:        string;
   rivalName:         string;
@@ -22,7 +22,7 @@ export default class Save {
   teamPokemonList:   object;
 
   constructor(filename: string) {
-    this.save = fs.readFileSync(filename);
+    this.buffer = fs.readFileSync(filename);
 
     this.playerName        = this.getPlayerName();
     this.rivalName         = this.getRivalName();
@@ -42,14 +42,14 @@ export default class Save {
     if (size > 0) {
       // Big-endian   Direction: 0x00 --> 0xFF
       const endOffset = offset + size;
-      const buffer    = this.save.slice(offset, endOffset);
+      const buffer    = this.buffer.slice(offset, endOffset);
 
       return buffer;
     } else {    
       // Little-endian   Direction: 0xFF --> 0x00
       const startOffset = offset - Math.abs(size) + 1;
       const endOffset   = startOffset + 2;
-      const buffer      = this.save.slice(startOffset, endOffset);
+      const buffer      = this.buffer.slice(startOffset, endOffset);
 
       return reverseBuffer(buffer);
     }
@@ -212,7 +212,7 @@ export default class Save {
             special:  bin2dec(byteToBits(getArray(0x1C)[0], 4, 8)),
           }
         },
-        
+
         level:        getArray(0x21)[0],
         maxHP:        getNumber(0x22, 2),
       });

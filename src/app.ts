@@ -8,4 +8,4 @@ console.log(`Player: ${save.playerName}
 Rival:  ${save.rivalName}
 ----------------------`);
 
-console.log(save.teamPokemonList[0]);
+console.log(save)
