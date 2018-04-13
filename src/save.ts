@@ -1,5 +1,5 @@
 import * as fs from 'fs';
-import { hex2dec,dec2hex, bytesToString, bcdToNumber,
+import { hex2dec, bytesToString, bcdToNumber,
          reverseBuffer, bytesToNumber, dec2bin, bin2dec, byteToBits } from './helpers';
 import { textSpeeds } from './lists/textSpeeds';
 import { speciesList } from './lists/species';
@@ -145,7 +145,7 @@ export default class Save {
     for (let i = 1; i < bytes[0] + 1; i++) {
       species.push(speciesList[bytes[i]]);
 
-      if (dec2hex(bytes[i]) == 'ff') {
+      if (bytes[i] == 0xff) {
         break;
       }
     }
@@ -176,10 +176,8 @@ export default class Save {
         moves: [0x08, 0x09, 0x0A, 0x0B].map(moveOffset => {
           const nameByte = getArray(moveOffset)[0];
           const PPByte   = getArray(moveOffset + 0x15)[0];
-          
-          const moveName = moves[nameByte];
 
-          if (!moveName) {
+          if (!moves[nameByte]) {
             return;
           }
 
