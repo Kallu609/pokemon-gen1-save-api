@@ -190,6 +190,7 @@ export default class Save {
 
         trainerID:  getNumber(0x0C, 2),
         experience: getNumber(0x0E, 3),
+
         stats: {
           attack:   getNumber(0x24, 2),
           defense:  getNumber(0x26, 2),
@@ -203,6 +204,7 @@ export default class Save {
             speed:    getNumber(0x17, 2),
             special:  getNumber(0x19, 2)
           },
+
           IV: {
             attack:   bin2dec(byteToBits(getArray(0x1B)[0], 0, 4)),
             defense:  bin2dec(byteToBits(getArray(0x1B)[0], 4, 8)),
@@ -210,6 +212,7 @@ export default class Save {
             special:  bin2dec(byteToBits(getArray(0x1C)[0], 4, 8)),
           }
         },
+        
         level:        getArray(0x21)[0],
         maxHP:        getNumber(0x22, 2),
       });
