@@ -151,7 +151,6 @@ export default class Save {
     }
 
     const pokemonStructOffset = startOffset + 0x008;
-
     const team = [];
 
     for (let i = 0; i < species.length; i++) {
