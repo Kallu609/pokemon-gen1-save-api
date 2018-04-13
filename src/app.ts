@@ -1,11 +1,11 @@
-
 import Save from './save';
+import { byteToBits } from './helpers';
 
-const save = new Save('./src/saves/timeplayed.sav');
+// const save = new Save('./saves/pokemonteam.sav');
+const save = new Save('./saves/pokemonteam.sav');
 
-console.log('Player: ' + save.playerName);
-console.log('Rival:  ' + save.rivalName);
+console.log(`Player: ${save.playerName}
+Rival:  ${save.rivalName}
+----------------------`);
 
-console.log('----------------');
-
-console.log(save.getCurrentPCBox())
+console.log(save.teamPokemonList[0]);

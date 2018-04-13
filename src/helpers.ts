@@ -2,9 +2,8 @@ import charset from "./charset";
 
 export function dec2hex(num: string | number): string {
   const str = num.toString();
-  const hex = parseInt(str, 10).toString(16);
 
-  return hex;
+  return parseInt(str, 10).toString(16)
 }
 
 export function hex2dec(num: string | number): number {
@@ -15,7 +14,14 @@ export function hex2dec(num: string | number): number {
 }
 
 export function dec2bin(num: number): string {
-  return String('00000000' + num.toString(2)).slice(-8);
+  return num.toString(2);
+}
+
+export function bin2dec(num: string | number): number {
+  const str = num.toString();
+  const dec = parseInt(str, 2).toString(10)
+
+  return parseInt(dec);
 }
 
 export function bytesToString(bytes: Buffer): string {
@@ -39,6 +45,12 @@ export function bytesToNumber(bytes: Buffer): number {
   }
 
   return hex2dec(byteStr);
+}
+
+export function byteToBits(byte: number, start: number=0, end: number=8): string {
+  const bin = dec2bin(byte).padStart(8, '0');
+
+  return bin.slice(start, end);
 }
 
 export function bcdToNumber(bcd: Buffer): number {

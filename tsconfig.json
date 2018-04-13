@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es5",
-    "lib": ["es7"],
+    "lib": ["es7", "es2017.string"],
     "sourceMap": true,
     "allowJs": true,
     "moduleResolution": "node",
