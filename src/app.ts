@@ -1,9 +1,7 @@
 import Save from './save';
-import { byteToBits } from './helpers';
-import { Buffer } from 'buffer';
 
 // const save = new Save('./saves/pokemonteam.sav');
-const save = new Save('./saves/items2.sav');
+const save = new Save('./saves/pokedex.sav');
 
 console.log(`Player: ${save.playerName}
 Rival:  ${save.rivalName}
