@@ -108,8 +108,8 @@ export default class Save {
         pokedex.push({
           index:   index,
           species: pokemonList[index],
-          owned:   binOwned[7 - j],
-          seen:    binSeen[7 - j]
+          owned:   binOwned[7 - j], // We need to read backwards from the binary
+          seen:    binSeen[7 - j]   // We need to read backwards from the binary
         });
       }
     }
