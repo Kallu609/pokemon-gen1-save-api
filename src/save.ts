@@ -213,7 +213,7 @@ export default class Save {
     const pokemons = [];
 
     if (pokemonCount == 0xff) {
-      return {};
+      return [];
     }
 
     for (let i = 0; i < pokemonCount; i++) {
