@@ -15,13 +15,14 @@ export default class Save {
 
   playerName:        string;
   rivalName:         string;
+  pokedex:           Array<object>;
   pocketItemList:    Array<object>;
+  PCItemList:        Array<object>;
   money:             number;
   casinoCoins:       number;
   options:           object;
   badges:            object;
   pikachuFriendship: number;
-  PCItemList:        Array<object>;
   currentPCBox:      number;
   timePlayed:        object; // Keys: hour, minute, second
   teamPokemonList:   object;
@@ -32,13 +33,14 @@ export default class Save {
 
     this.playerName        = this.getPlayerName();
     this.rivalName         = this.getRivalName();
+    this.pokedex           = this.getPokedex();
     this.pocketItemList    = this.getPocketItemList();
+    this.PCItemList        = this.getPCItemList();
     this.money             = this.getMoney();
     this.casinoCoins       = this.getCasinoCoins();
     this.options           = this.getOptions();
     this.badges            = this.getBadges();
     this.pikachuFriendship = this.getPikachuFriendship();
-    this.PCItemList        = this.getPCItemList();
     this.currentPCBox      = this.getCurrentPCBox();
     this.timePlayed        = this.getTimePlayed();
     this.teamPokemonList   = this.getTeamPokemonList();
@@ -92,13 +94,22 @@ export default class Save {
     const pokedex: Array<object> = [];
 
     for (let i = 0; i < 19; i++) {
-      const binOwned = dec2bin(this.getBytes(0x25A3)[0]).padStart(8, '0');
-      const binSeen  = dec2bin(this.getBytes(0x25B6)[0]).padStart(8, '0');
+      const binOwned = dec2bin(this.getBytes(0x25A3 + i)[0]).padStart(8, '0');
+      const binSeen  = dec2bin(this.getBytes(0x25B6 + i)[0]).padStart(8, '0');
 
       for (let j = 0; j < 8; j++) {
-        console.log(i*j);
+        const index = i * 8 + j + 1;
+
+        // 152 is not needed
+        if (index === 152) {
+          break;
+        }
+        
         pokedex.push({
-          species: pokemonList[i * j + 1]
+          index:   index,
+          species: pokemonList[index],
+          owned:   binOwned[7 - j],
+          seen:    binSeen[7 - j]
         });
       }
     }
