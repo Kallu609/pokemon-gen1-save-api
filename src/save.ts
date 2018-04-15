@@ -44,8 +44,7 @@ export default class Save {
     this.currentPCBox      = this.getCurrentPCBox();
     this.timePlayed        = this.getTimePlayed();
     this.teamPokemonList   = this.getTeamPokemonList();
-
-    this.PCBoxList = {};
+    this.PCBoxList         = {};
 
     for (let i = 0; i < 13; i++) {
       if (i === 0) {
