@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { hex2dec, bytesToString, bcdToNumber,
-         reverseBuffer, bytesToNumber, dec2bin, bin2dec, byteToBits } from './helpers';
+         reverseBuffer, bytesToNumber, dec2bin, bin2dec, byteToBits, extendObject, dec2hex } from './helpers';
 import { textSpeeds } from './lists/textSpeeds';
 import { speciesList } from './lists/species';
 import { pokemonTypes } from './lists/types';
@@ -20,7 +20,8 @@ export default class Save {
   currentPCBox:      number;
   timePlayed:        object; // Keys: hour, minute, second
   teamPokemonList:   object;
-
+  PCBoxList:         object;
+  
   constructor(filename: string) {
     this.buffer = fs.readFileSync(filename);
 
@@ -34,6 +35,16 @@ export default class Save {
     this.currentPCBox      = this.getCurrentPCBox();
     this.timePlayed        = this.getTimePlayed();
     this.teamPokemonList   = this.getTeamPokemonList();
+
+    this.PCBoxList = {};
+
+    for (let i = 0; i < 13; i++) {
+      if (i === 0) {
+        this.PCBoxList['current'] = this.getPCBoxList(i);
+      } else {
+        this.PCBoxList[i] = this.getPCBoxList(i);
+      }
+    }
   }
 
   getBytes(offset: string | number, size: number = 1): Buffer {
@@ -55,20 +66,25 @@ export default class Save {
     }
   }
 
-  getPlayerName(): string {
-    const bytes     = this.getBytes(0x2598, 11);
+  getTextString(bytes: Buffer): string {
     const strEnd    = bytes.findIndex(byte => byte === 0x50); // 0x50 is string terminator
     const nameBytes = bytes.slice(0, strEnd);
 
     return bytesToString(nameBytes);
   }
+  
+  getPlayerName(): string {
+    return this.getTextString(this.getBytes(0x2598, 11));
+  }
 
   getRivalName(): string {
-    const bytes     = this.getBytes(0x25F6, 11);
-    const strEnd    = bytes.findIndex(byte => byte === 0x50); // 0x50 is string terminator
-    const nameBytes = bytes.slice(0, strEnd);
+    return this.getTextString(this.getBytes(0x25F6, 11));
+  }
 
-    return bytesToString(nameBytes);
+  getPocketItemList(): Array<string> {
+    // 0x25C9
+
+    return [];
   }
 
   getMoney(): number {
@@ -135,13 +151,28 @@ export default class Save {
     }
   }
 
-  getTeamPokemonList(): object {
-    const startOffset = 0x2F2C;
-    const teamCount = this.getBytes(startOffset)[0];
-    const team = [];
+  private getPokemonList(startOffset: number, isPCBox: boolean): object {
+    const pokemonCount = this.getBytes(startOffset)[0];
+    const pokemons = [];
 
-    for (let i = 0; i < teamCount; i++) {
-      const iterationOffset = startOffset + 0x008 + 44 * i;
+    if (pokemonCount == 0xff) {
+      return {};
+    }
+
+    for (let i = 0; i < pokemonCount; i++) {
+      let iterationOffset: number;
+      let originalTrainerOffset;
+      let nameOffset;
+
+      if (isPCBox) {
+        iterationOffset       = startOffset + 0x16 + 33 * i;
+        originalTrainerOffset = startOffset + 0x02AA;
+        nameOffset            = startOffset + 0x0386;
+      } else {
+        iterationOffset       = startOffset + 0x08 + 44 * i;
+        originalTrainerOffset = startOffset + 0x0110;
+        nameOffset            = startOffset + 0x0152;
+      }
 
       // .map() doesn't work with buffer so
       // we need to convert buffer to array
@@ -154,11 +185,11 @@ export default class Save {
         return bytesToNumber(this.getBytes(iterationOffset + offset, size));
       }
       
-      team.push({
-        species:    speciesList[getArray(0x00)[0]],
-        currentHP:  getArray(0x03)[0],
-        status:     getArray(0x04)[0], // TO-DO: Convert to corresponding status text 
-        types:      getArray(0x05, 2).map(x => pokemonTypes[x]),
+      let pokemon = {
+        species:   speciesList[getArray(0x00)[0]],
+        currentHP: getArray(0x03)[0],
+        status:    getArray(0x04)[0], // TO-DO: Convert to corresponding status text 
+        types:     getArray(0x05, 2).map(x => pokemonTypes[x]),
 
         moves: [0x08, 0x09, 0x0A, 0x0B].map(moveOffset => {
           const nameByte = getArray(moveOffset)[0];
@@ -179,32 +210,60 @@ export default class Save {
         experience: getNumber(0x0E, 3),
 
         stats: {
-          attack:   getNumber(0x24, 2),
-          defense:  getNumber(0x26, 2),
-          speed:    getNumber(0x28, 2),
-          special:  getNumber(0x2A, 2),
-
           EV: {
-            hp:       getNumber(0x11, 2),
-            attack:   getNumber(0x13, 2),
-            defense:  getNumber(0x15, 2),
-            speed:    getNumber(0x17, 2),
-            special:  getNumber(0x19, 2)
+            hp:      getNumber(0x11, 2),
+            attack:  getNumber(0x13, 2),
+            defense: getNumber(0x15, 2),
+            speed:   getNumber(0x17, 2),
+            special: getNumber(0x19, 2)
           },
 
           IV: {
-            attack:   bin2dec(byteToBits(getArray(0x1B)[0], 0, 4)),
-            defense:  bin2dec(byteToBits(getArray(0x1B)[0], 4, 8)),
-            speed:    bin2dec(byteToBits(getArray(0x1C)[0], 0, 4)),
-            special:  bin2dec(byteToBits(getArray(0x1C)[0], 4, 8)),
+            attack:  bin2dec(byteToBits(getArray(0x1B)[0], 0, 4)),
+            defense: bin2dec(byteToBits(getArray(0x1B)[0], 4, 8)),
+            speed:   bin2dec(byteToBits(getArray(0x1C)[0], 0, 4)),
+            special: bin2dec(byteToBits(getArray(0x1C)[0], 4, 8)),
           }
         },
 
-        level:        getArray(0x21)[0],
-        maxHP:        getNumber(0x22, 2),
-      });
+        originalTrainer: this.getTextString(this.getBytes(originalTrainerOffset + i * 11, 11)),
+        name:            this.getTextString(this.getBytes(nameOffset + i * 11, 11))
+      };
+
+      // Full 44 byte pokemon data structure if it's not PC box
+      // Additions: Level, Max HP, Attack, Defense, Speed and Special
+      if (!isPCBox) {
+        pokemon.stats['attack']  = getNumber(0x24, 2);
+        pokemon.stats['defense'] = getNumber(0x26, 2);
+        pokemon.stats['speed']   = getNumber(0x28, 2);
+        pokemon.stats['special'] = getNumber(0x2A, 2);
+
+        pokemon['level'] = getArray(0x21)[0];
+        pokemon['maxHP'] = getNumber(0x22, 2);
+      }
+      
+      pokemons.push(pokemon);
     }
     
-    return team;
+    return pokemons;
+  }
+
+  getTeamPokemonList(): object {
+    return this.getPokemonList(0x2F2C, false);
+  }
+
+  getPCBoxList(PCBoxId: number = 0): object {
+    // PCBoxId == 0 for current one
+    let offset;
+    
+    if (PCBoxId === 0) {
+      offset = 0x30C0;
+    } else if (PCBoxId > 0 && PCBoxId <= 12) {
+      offset = 0x4000 + 1122 * (PCBoxId - 1);
+    } else {
+      return {};
+    }
+
+    return this.getPokemonList(offset, true);
   }
 }
