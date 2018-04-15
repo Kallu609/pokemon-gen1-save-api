@@ -1,10 +1,12 @@
 import * as fs from 'fs';
 import { hex2dec, bytesToString, bcdToNumber,
-         reverseBuffer, bytesToNumber, dec2bin, bin2dec, byteToBits, extendObject, dec2hex } from './helpers';
+         reverseBuffer, bytesToNumber, dec2bin,
+         bin2dec, byteToBits } from './helpers';
 import { textSpeeds } from './lists/textSpeeds';
 import { speciesList } from './lists/species';
 import { pokemonTypes } from './lists/types';
 import { moves } from './lists/moves';
+import { itemList } from './lists/items';
 
 
 export default class Save {
@@ -12,11 +14,13 @@ export default class Save {
 
   playerName:        string;
   rivalName:         string;
+  pocketItemList:    Array<object>;
   money:             number;
   casinoCoins:       number;
   options:           object;
   badges:            object;
   pikachuFriendship: number;
+  PCItemList:        Array<object>;
   currentPCBox:      number;
   timePlayed:        object; // Keys: hour, minute, second
   teamPokemonList:   object;
@@ -27,11 +31,13 @@ export default class Save {
 
     this.playerName        = this.getPlayerName();
     this.rivalName         = this.getRivalName();
+    this.pocketItemList    = this.getPocketItemList();
     this.money             = this.getMoney();
     this.casinoCoins       = this.getCasinoCoins();
     this.options           = this.getOptions();
     this.badges            = this.getBadges();
     this.pikachuFriendship = this.getPikachuFriendship();
+    this.PCItemList        = this.getPCItemList();
     this.currentPCBox      = this.getCurrentPCBox();
     this.timePlayed        = this.getTimePlayed();
     this.teamPokemonList   = this.getTeamPokemonList();
@@ -47,7 +53,7 @@ export default class Save {
     }
   }
 
-  getBytes(offset: string | number, size: number = 1): Buffer {
+  private getBytes(offset: string | number, size: number = 1): Buffer {
     offset = (typeof offset == 'string') ? hex2dec(offset) : offset;
 
     if (size > 0) {
@@ -66,38 +72,55 @@ export default class Save {
     }
   }
 
-  getTextString(bytes: Buffer): string {
+  private getTextString(bytes: Buffer): string {
     const strEnd    = bytes.findIndex(byte => byte === 0x50); // 0x50 is string terminator
     const nameBytes = bytes.slice(0, strEnd);
 
     return bytesToString(nameBytes);
   }
   
-  getPlayerName(): string {
+  private getPlayerName(): string {
     return this.getTextString(this.getBytes(0x2598, 11));
   }
 
-  getRivalName(): string {
+  private getRivalName(): string {
     return this.getTextString(this.getBytes(0x25F6, 11));
   }
 
-  getPocketItemList(): Array<string> {
-    // 0x25C9
+  private getItemList(startOffset: number): Array<object> {
+    const itemCount = this.getBytes(startOffset)[0];
+    const items: Array<object> = [];
 
-    return [];
+    if (itemCount === 0) {
+      return items;
+    }
+
+    for (let i = 0; i < itemCount; i++) {
+      let itemBytes = this.getBytes(startOffset += 0x01 + 2 * i, 2)
+      items.push({
+        name: itemList[itemBytes[0]],
+        count: itemBytes[1]
+      });
+    }
+
+    return items;
   }
 
-  getMoney(): number {
+  private getPocketItemList(): Array<object> {
+    return this.getItemList(0x25C9);
+  }
+
+  private getMoney(): number {
     const bytes = this.getBytes(0x25f3, 3);
     return bcdToNumber(bytes);
   }
   
-  getCasinoCoins(): number {
+  private getCasinoCoins(): number {
     const bytes = this.getBytes(0x2850, 2);
     return bcdToNumber(bytes);
   }
   
-  getOptions(): object {
+  private getOptions(): object {
     const bytes = this.getBytes(0x2601);
     const bin = dec2bin(bytes[0]).padStart(8, '0');
 
@@ -111,7 +134,7 @@ export default class Save {
     };
   }
 
-  getBadges(): object {
+  private getBadges(): object {
     const bytes = this.getBytes(0x2602);
     const bin = dec2bin(bytes[0]);
 
@@ -127,17 +150,22 @@ export default class Save {
     }
   }
 
-  getPikachuFriendship(): number {
+  private getPikachuFriendship(): number {
     const bytes = this.getBytes(0x271C);
     return bytes[0];
   }
 
-  getCurrentPCBox(): number {
+  private getPCItemList(): Array<object> {
+    // TO-DO: Test if works (it should)
+    return this.getItemList(0x27E6);
+  }
+
+  private getCurrentPCBox(): number {
     const bytes = this.getBytes(0x284C);
     return bytes[0] + 1;
   }
 
-  getTimePlayed(): object {
+  private getTimePlayed(): object {
     // First two bytes are little-endian.
     // In this order: Hour (2 bytes), minute (1 byte), second (1 byte)
     const hourBytes = this.getBytes(0x2CEE, -2);
@@ -248,11 +276,11 @@ export default class Save {
     return pokemons;
   }
 
-  getTeamPokemonList(): object {
+  private getTeamPokemonList(): object {
     return this.getPokemonList(0x2F2C, false);
   }
 
-  getPCBoxList(PCBoxId: number = 0): object {
+  private getPCBoxList(PCBoxId: number = 0): object {
     // PCBoxId == 0 for current one
     let offset;
     

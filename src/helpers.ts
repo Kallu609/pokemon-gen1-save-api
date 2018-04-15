@@ -78,13 +78,3 @@ export function reverseBuffer(src: Buffer): Buffer {
   
   return buffer;
 }
-
-export function extendObject(source: object, properties: object): object {
-  for(const property in properties) {
-      if(properties.hasOwnProperty(property)) {
-          source[property] = properties[property];
-      }
-  }
-  
-  return source;
-};
