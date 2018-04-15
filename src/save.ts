@@ -318,7 +318,7 @@ export default class Save {
     } else if (PCBoxId > 0 && PCBoxId <= 12) {
       offset = 0x4000 + 1122 * (PCBoxId - 1);
     } else {
-      return {};
+      return [];
     }
 
     return this.getPokemonList(offset, true);

@@ -6,4 +6,4 @@ const save = new Save('./saves/pokedex.sav');
 console.log(`Player: ${save.playerName}
 Rival:  ${save.rivalName}
 ----------------------`);
-console.log(save.pokedex);
+console.log(save);
