@@ -2,11 +2,12 @@ import * as fs from 'fs';
 import { hex2dec, bytesToString, bcdToNumber,
          reverseBuffer, bytesToNumber, dec2bin,
          bin2dec, byteToBits } from './helpers';
-import { textSpeeds } from './lists/textSpeeds';
-import { speciesList } from './lists/species';
+import { textSpeeds   } from './lists/textSpeeds';
+import { speciesList  } from './lists/species';
 import { pokemonTypes } from './lists/types';
-import { moves } from './lists/moves';
-import { itemList } from './lists/items';
+import { moves        } from './lists/moves';
+import { itemList     } from './lists/items';
+import { pokemonList  } from './lists/pokemonList';
 
 
 export default class Save {
@@ -87,6 +88,24 @@ export default class Save {
     return this.getTextString(this.getBytes(0x25F6, 11));
   }
 
+  private getPokedex(): Array<object> {
+    const pokedex: Array<object> = [];
+
+    for (let i = 0; i < 19; i++) {
+      const binOwned = dec2bin(this.getBytes(0x25A3)[0]).padStart(8, '0');
+      const binSeen  = dec2bin(this.getBytes(0x25B6)[0]).padStart(8, '0');
+
+      for (let j = 0; j < 8; j++) {
+        console.log(i*j);
+        pokedex.push({
+          species: pokemonList[i * j + 1]
+        });
+      }
+    }
+
+    return pokedex;
+  }
+
   private getItemList(startOffset: number): Array<object> {
     const itemCount = this.getBytes(startOffset)[0];
     const items: Array<object> = [];
@@ -108,6 +127,11 @@ export default class Save {
 
   private getPocketItemList(): Array<object> {
     return this.getItemList(0x25C9);
+  }
+
+  private getPCItemList(): Array<object> {
+    // TO-DO: Test if works (it should)
+    return this.getItemList(0x27E6);
   }
 
   private getMoney(): number {
@@ -153,11 +177,6 @@ export default class Save {
   private getPikachuFriendship(): number {
     const bytes = this.getBytes(0x271C);
     return bytes[0];
-  }
-
-  private getPCItemList(): Array<object> {
-    // TO-DO: Test if works (it should)
-    return this.getItemList(0x27E6);
   }
 
   private getCurrentPCBox(): number {
