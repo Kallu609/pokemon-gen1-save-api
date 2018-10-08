@@ -5,12 +5,15 @@
   "main": "app.ts",
   "scripts": {
     "start": "ts-node ./src/app.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Kallu609",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^23.3.4",
     "@types/node": "^9.6.4",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.4",
     "ts-node": "^5.0.1",
     "typescript": "^2.8.1"
   },

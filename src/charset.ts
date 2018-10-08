@@ -1,5 +1,3 @@
-import { dec2hex, hex2dec } from "./helpers";
-
 /*
 0x49: Used in Pokédex entries to prompt the player to press a button, after which the screen is cleared to make way for the following text.
 0x4A: Prints PKMN in English games and が in Japanese games.
@@ -28,14 +26,7 @@ The default value is Enemy in English games and てきの　 in Japanese games.
 0x5F: Used in Pokédex entries to mark the end of the entry, without a visual prompt to the player.
 */
 
-function logCharset(): void {
-  // For debug purposes
-  for (let index in charset) {
-    console.log(`${dec2hex(index)}: ${charset[index]}`)
-  }
-}
-
-function createCharset(): Array<string | null | undefined>  {
+function createCharset(): Array<string | null | undefined> {
   /*
   null      = null char
   undefined = Junk
@@ -46,17 +37,17 @@ function createCharset(): Array<string | null | undefined>  {
     null,
 
     // 0x01 - 0x47   71 bytes of junk
-    ... Array(71).fill(undefined),
+    ...Array(71).fill(undefined),
 
     // 0x48 - 0x5F   Control characters, doc at top
     // TO-DO: Add handlers for every control character
-    ... Array(24).fill('$CONTROL$'),
+    ...Array(24).fill('$CONTROL$'),
 
     // 0x60 - 0x7F   Character leftovers from JAP game version, do not use
-    ... Array(32).fill('$JAP$'),
+    ...Array(32).fill('$JAP$'),
 
     // 0x80 - 0xBA
-    ... 'ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyzé'.split(''),
+    ...'ABCDEFGHIJKLMNOPQRSTUVWXYZ():;[]abcdefghijklmnopqrstuvwxyzé'.split(''),
 
     // 0xBB - 0xBF   lol imaginary pokemon characters
     `'d`,
@@ -66,7 +57,7 @@ function createCharset(): Array<string | null | undefined>  {
     `'v`,
 
     // 0xC0 - 0xDF   32 bytes of junk
-    ... Array(32).fill(undefined),
+    ...Array(32).fill(undefined),
 
     // 0xE0 - 0xE5
     `'`,
@@ -77,13 +68,13 @@ function createCharset(): Array<string | null | undefined>  {
     `'m`,
 
     // 0xE6 - 0xEF
-    ... '?!.ァゥェ▷▶▼♂'.split(''),
+    ...'?!.ァゥェ▷▶▼♂'.split(''),
 
     // 0xF0   Pokédollar symbol
     `PK$`,
 
     // 0xF1 - 0xFF
-    ... '×./,♀0123456789'.split('')
+    ...'×./,♀0123456789'.split(''),
   ];
 
   return charset;
